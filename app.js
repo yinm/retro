@@ -26,21 +26,27 @@ https.get(option, (res) => {
 
 function getWantedEventsData(data) {
   let wantedEventsData = '';
+  let title;
+  let url;
 
   for (let i = 0, length = data.length; i < length; i++) {
     switch (data[i].type) {
       case 'IssuesEvent':
       case 'IssueCommentEvent':
-        wantedEventsData += data[i].payload.issue.title + '\n';
+        title = data[i].payload.issue.title;
+        url = data[i].payload.issue.html_url;
+        wantedEventsData += `* [${title}](${url})\n`;
         break;
 
       case 'PullRequestEvent':
       case 'PullRequestReviewCommentEvent':
-        wantedEventsData += data[i].payload.pull_request.title + '\n';
+        title = data[i].payload.pull_request.title;
+        url = data[i].payload.pull_request.html_url;
+        wantedEventsData += `* [${title}](${url})\n`;
         break;
 
       default:
-        wantedEventsData += `${i}には、なかったよ\n`; // for debug
+        wantedEventsData += `* ${i}には、なかったよ\n`; // for debug
         break;
     }
   }

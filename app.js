@@ -83,14 +83,14 @@ function getWantedEventsData(data) {
         case 'IssueCommentEvent':
           title = data[i].payload.issue.title;
           url = data[i].payload.issue.html_url;
-          wantedEventsData += `* [${title}](${url})\n`;
+          wantedEventsData += `* [Issue](${url}): ${title}\n`;
           break;
 
         case 'PullRequestEvent':
         case 'PullRequestReviewCommentEvent':
           title = data[i].payload.pull_request.title;
           url = data[i].payload.pull_request.html_url;
-          wantedEventsData += `* [${title}](${url})\n`;
+          wantedEventsData += `* [PullRequest](${url}): ${title}\n`;
           break;
 
         default:

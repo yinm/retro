@@ -1,9 +1,11 @@
+require('dotenv').config();
+
 const https = require('https');
 
 const option = {
-  host: 'api.github.com',
+  host: process.env.GITHUB_HOST,
   port: 443,
-  path: '/users/yinm/events',
+  path: `/users/${process.env.GITHUB_USER}/events`,
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
     'user-agent': 'node.js'

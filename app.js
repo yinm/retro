@@ -1,6 +1,8 @@
 require('dotenv').config();
 
 const https = require('https');
+const moment = require('moment');
+const minimist = require('minimist');
 
 const option = {
   host: process.env.GITHUB_HOST,
@@ -11,6 +13,8 @@ const option = {
     'user-agent': 'node.js'
   }
 };
+
+console.log('now searching...');
 
 https.get(option, (res) => {
   let body = '';
@@ -31,25 +35,68 @@ function getWantedEventsData(data) {
   let title;
   let url;
 
+  let from;
+  let to;
+  const minimistOptions = {
+    alias: {
+      f: 'from',
+      t: 'to'
+    }
+  };
+  const argv = minimist(process.argv.slice(2), minimistOptions);
+
+  if ('from' in argv) {
+    from =  argv.from;
+  }
+  if ('to' in argv) {
+    to = argv.to;
+  }
+
+  if (
+       !moment(from).isValid()
+    || !moment(to).isValid()
+  ) {
+    console.log('invalid date format.');
+    process.exit(1);
+
+  } else if (from === undefined && to === undefined) {
+    from = moment().startOf('day');
+    to = moment().endOf('day');
+
+  } else if (from === undefined || to === undefined) {
+    console.log('invalid arguments pair.');
+    process.exit(1);
+
+  } else {
+    from = moment(from).startOf('day');
+    to = moment(to).endOf('day');
+  }
+
   for (let i = 0, length = data.length; i < length; i++) {
-    switch (data[i].type) {
-      case 'IssuesEvent':
-      case 'IssueCommentEvent':
-        title = data[i].payload.issue.title;
-        url = data[i].payload.issue.html_url;
-        wantedEventsData += `* [${title}](${url})\n`;
-        break;
+    if (
+         moment(data[i].created_at).isAfter(from)
+      && moment(data[i].created_at).isBefore(to)
+    ) {
 
-      case 'PullRequestEvent':
-      case 'PullRequestReviewCommentEvent':
-        title = data[i].payload.pull_request.title;
-        url = data[i].payload.pull_request.html_url;
-        wantedEventsData += `* [${title}](${url})\n`;
-        break;
+      switch (data[i].type) {
+        case 'IssuesEvent':
+        case 'IssueCommentEvent':
+          title = data[i].payload.issue.title;
+          url = data[i].payload.issue.html_url;
+          wantedEventsData += `* [Issue](${url}): ${title}\n`;
+          break;
 
-      default:
-        wantedEventsData += `* ${i}には、なかったよ\n`; // for debug
-        break;
+        case 'PullRequestEvent':
+        case 'PullRequestReviewCommentEvent':
+          title = data[i].payload.pull_request.title;
+          url = data[i].payload.pull_request.html_url;
+          wantedEventsData += `* [PullRequest](${url}): ${title}\n`;
+          break;
+
+        default:
+          wantedEventsData += `* ${i}には、なかったよ。created_at: ${moment(data[i].created_at)}\n`; // for debug
+          break;
+      }
     }
   }
 

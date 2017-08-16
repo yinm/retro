@@ -43,23 +43,31 @@ function getWantedEventsData(data) {
   };
   const argv = minimist(process.argv.slice(2), minimistOptions);
 
-  if ('from' in argv && moment(argv.from).isValid()) {
-    from = moment(argv.from).startOf('day');
+  if ('from' in argv) {
+    from =  argv.from;
   }
-  if ('to' in argv && moment(argv.to).isValid()) {
-    to = moment(argv.to).endOf('day');
+  if ('to' in argv) {
+    to = argv.to;
   }
 
-  if (from === undefined || to === undefined) {
+  if (
+       !moment(from).isValid()
+    || !moment(to).isValid()
+  ) {
+    console.log('invalid date format.');
+    process.exit(1);
 
-    if (from === undefined && to === undefined) {
-      from = moment().startOf('day');
-      to = moment().endOf('day');
+  } else if (from === undefined && to === undefined) {
+    from = moment().startOf('day');
+    to = moment().endOf('day');
 
-    } else {
-      console.log('invalid arguments.');
-      process.exit(1);
-    }
+  } else if (from === undefined || to === undefined) {
+    console.log('invalid arguments pair.');
+    process.exit(1);
+
+  } else {
+    from = moment(from).startOf('day');
+    to = moment(to).endOf('day');
   }
 
   for (let i = 0, length = data.length; i < length; i++) {

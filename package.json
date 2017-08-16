@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/yinm/retro/issues"
   },
-  "homepage": "https://github.com/yinm/retro#readme"
+  "homepage": "https://github.com/yinm/retro#readme",
+  "dependencies": {
+    "dotenv": "^4.0.0"
+  }
 }

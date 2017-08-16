@@ -18,6 +18,7 @@
   "homepage": "https://github.com/yinm/retro#readme",
   "dependencies": {
     "dotenv": "^4.0.0",
+    "minimist": "^1.2.0",
     "moment": "^2.18.1"
   }
 }

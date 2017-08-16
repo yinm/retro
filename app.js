@@ -28,8 +28,7 @@ function getIds(data) {
   let ids = '';
 
   for (let i = 0, length = data.length; i < length; i++) {
-    ids += data[i].id;
-    ids += '\n';
+    ids += data[i].id + '\n';
   }
 
   return ids;

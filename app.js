@@ -3,6 +3,7 @@ const https = require('https');
 const option = {
   host: 'api.github.com',
   port: 443,
+  path: '/users/yinm/events',
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
     'user-agent': 'node.js'

@@ -50,15 +50,16 @@ function getWantedEventsData(data) {
     to = moment(argv.to).endOf('day');
   }
 
-  // [TODO] error handling
-  // if (from === undefined || to === undefined) {
-  //   console.log('invalid arguments.');
-  //   process.exit(1);
-  // }
+  if (from === undefined || to === undefined) {
 
-  if (from === undefined && to === undefined) {
-    from = moment().startOf('day');
-    to = moment().endOf('day');
+    if (from === undefined && to === undefined) {
+      from = moment().startOf('day');
+      to = moment().endOf('day');
+
+    } else {
+      console.log('invalid arguments.');
+      process.exit(1);
+    }
   }
 
   for (let i = 0, length = data.length; i < length; i++) {

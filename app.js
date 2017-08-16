@@ -95,7 +95,6 @@ function getWantedEventsData(data) {
           break;
 
         default:
-          wantedEventsData += `* ${i}には、なかったよ。created_at: ${moment(data[i].created_at)}\n`; // for debug
           break;
       }
     }

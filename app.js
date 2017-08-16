@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const https = require('https');
+const moment = require('moment');
 
 const option = {
   host: process.env.GITHUB_HOST,
@@ -27,29 +28,33 @@ https.get(option, (res) => {
 });
 
 function getWantedEventsData(data) {
+  const today = moment().startOf('day');
   let wantedEventsData = '';
   let title;
   let url;
 
   for (let i = 0, length = data.length; i < length; i++) {
-    switch (data[i].type) {
-      case 'IssuesEvent':
-      case 'IssueCommentEvent':
-        title = data[i].payload.issue.title;
-        url = data[i].payload.issue.html_url;
-        wantedEventsData += `* [${title}](${url})\n`;
-        break;
+    if (moment(data[i].created_at).isAfter(today)) {
 
-      case 'PullRequestEvent':
-      case 'PullRequestReviewCommentEvent':
-        title = data[i].payload.pull_request.title;
-        url = data[i].payload.pull_request.html_url;
-        wantedEventsData += `* [${title}](${url})\n`;
-        break;
+      switch (data[i].type) {
+        case 'IssuesEvent':
+        case 'IssueCommentEvent':
+          title = data[i].payload.issue.title;
+          url = data[i].payload.issue.html_url;
+          wantedEventsData += `* [${title}](${url})\n`;
+          break;
 
-      default:
-        wantedEventsData += `* ${i}には、なかったよ\n`; // for debug
-        break;
+        case 'PullRequestEvent':
+        case 'PullRequestReviewCommentEvent':
+          title = data[i].payload.pull_request.title;
+          url = data[i].payload.pull_request.html_url;
+          wantedEventsData += `* [${title}](${url})\n`;
+          break;
+
+        default:
+          wantedEventsData += `* ${i}には、なかったよ。created_at: ${moment(data[i].created_at)}\n`; // for debug
+          break;
+      }
     }
   }
 

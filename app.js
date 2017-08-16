@@ -14,6 +14,8 @@ const option = {
   }
 };
 
+console.log('now searching...');
+
 https.get(option, (res) => {
   let body = '';
 

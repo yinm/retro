@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const https = require('https');
 const moment = require('moment');
+const minimist = require('minimist');
 
 const option = {
   host: process.env.GITHUB_HOST,
@@ -28,13 +29,43 @@ https.get(option, (res) => {
 });
 
 function getWantedEventsData(data) {
-  const today = moment().startOf('day');
   let wantedEventsData = '';
   let title;
   let url;
 
+  let from;
+  let to;
+  const minimistOptions = {
+    alias: {
+      f: 'from',
+      t: 'to'
+    }
+  };
+  const argv = minimist(process.argv.slice(2), minimistOptions);
+
+  if ('from' in argv && moment(argv.from).isValid()) {
+    from = moment(argv.from).startOf('day');
+  }
+  if ('to' in argv && moment(argv.to).isValid()) {
+    to = moment(argv.to).endOf('day');
+  }
+
+  // [TODO] error handling
+  // if (from === undefined || to === undefined) {
+  //   console.log('invalid arguments.');
+  //   process.exit(1);
+  // }
+
+  if (from === undefined && to === undefined) {
+    from = moment().startOf('day');
+    to = moment().endOf('day');
+  }
+
   for (let i = 0, length = data.length; i < length; i++) {
-    if (moment(data[i].created_at).isAfter(today)) {
+    if (
+         moment(data[i].created_at).isAfter(from)
+      && moment(data[i].created_at).isBefore(to)
+    ) {
 
       switch (data[i].type) {
         case 'IssuesEvent':

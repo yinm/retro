@@ -19,6 +19,18 @@ https.get(option, (res) => {
 
   res.on('end', () => {
     const data = JSON.parse(body);
-    console.log(data);
+    const ids = getIds(data);
+    console.log(ids);
   });
 });
+
+function getIds(data) {
+  let ids = '';
+
+  for (let i = 0, length = data.length; i < length; i++) {
+    ids += data[i].id;
+    ids += '\n';
+  }
+
+  return ids;
+}
